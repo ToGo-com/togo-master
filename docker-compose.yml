@@ -1,0 +1,43 @@
+# ============================================================
+# To Go — togo-master (panel admin: Vite + React SPA, estatico via nginx)
+# ============================================================
+# Requiere la red externa "proxy" (Traefik) — sin BD ni backend propio,
+# el panel llama a la API real (api.togo-ve.com) directo desde el navegador.
+#
+# Variables en .env (junto a este archivo):
+#   PANEL_DOMAIN=panel-admin.togo-ve.com          (default abajo, override si aplica)
+#   VITE_API_BASE_URL=https://api.togo-ve.com      (horneado en build time, no runtime)
+# ============================================================
+
+name: togo-master
+
+services:
+  panel-admin:
+    build:
+      context: .
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:?falta VITE_API_BASE_URL en .env}
+    image: togo-master:0.1.0
+    container_name: togo-master
+    restart: unless-stopped
+    networks:
+      - proxy
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.togo-master.rule=Host(`${PANEL_DOMAIN:-panel-admin.togo-ve.com}`)"
+      - "traefik.http.routers.togo-master.entrypoints=websecure"
+      - "traefik.http.routers.togo-master.tls=true"
+      - "traefik.http.routers.togo-master.tls.certresolver=myresolver"
+      - "traefik.http.services.togo-master.loadbalancer.server.port=8080"
+
+networks:
+  proxy:
+    external: true
