@@ -76,12 +76,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
         { id: '/marketing', label: 'Marketing', icon: AutoAwesomeIcon, badge: badgeCounts.MARKETING, badgeColor: '#f59e0b' },
       ],
     },
-    {
-      group: 'ARQUITECTURA Y DATOS',
-      items: [
-        { id: '/schema', label: 'Esquema Docs', icon: CodeIcon, badge: 'TS', badgeColor: '#1e293b' },
-      ],
-    },
   ] as { group: string, items: { id: string, label: string, icon: any, badge?: number | string, badgeColor?: string }[] }[];
 
   const drawerContent = (
