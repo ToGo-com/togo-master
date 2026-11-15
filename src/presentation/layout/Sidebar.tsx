@@ -9,6 +9,7 @@ import {
   Box,
   Avatar,
   Chip,
+  IconButton,
 } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -19,10 +20,16 @@ import ReceiptIcon from '@mui/icons-material/ReceiptTwoTone';
 import PercentIcon from '@mui/icons-material/PercentTwoTone';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesomeTwoTone';
 import TwoWheelerIcon from '@mui/icons-material/TwoWheelerTwoTone';
-import CodeIcon from '@mui/icons-material/CodeTwoTone';
 import SecurityIcon from '@mui/icons-material/SecurityTwoTone';
+import PeopleIcon from '@mui/icons-material/PeopleTwoTone';
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBagTwoTone';
+import PaidIcon from '@mui/icons-material/PaidTwoTone';
+import StarIcon from '@mui/icons-material/StarTwoTone';
+import ForumIcon from '@mui/icons-material/ForumTwoTone';
+import LogoutIcon from '@mui/icons-material/LogoutTwoTone';
 
 import { useAppStore } from '../../application/store/useAppStore';
+import { useAuthStore } from '../../application/store/useAuthStore';
 
 const drawerWidth = 240;
 
@@ -34,6 +41,9 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile }) => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const authUser = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
 
   const companies = useAppStore((state) => state.companies);
   const subscriptions = useAppStore((state) => state.subscriptions);
@@ -61,6 +71,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
       items: [
         { id: '/companies', label: 'Empresas', icon: BusinessIcon, badge: badgeCounts.COMPANIES, badgeColor: '#F49730' },
         { id: '/drivers', label: 'Drivers', icon: TwoWheelerIcon, badge: badgeCounts.DRIVERS, badgeColor: '#f59e0b' },
+      ],
+    },
+    {
+      group: 'OPERACIÓN (API REAL)',
+      items: [
+        { id: '/empresas', label: 'Empresas (API)', icon: BusinessIcon },
+        { id: '/customers', label: 'Compradores', icon: PeopleIcon },
+        { id: '/orders', label: 'Pedidos', icon: ShoppingBagIcon },
+        { id: '/sales', label: 'Ventas', icon: PaidIcon },
+        { id: '/featured', label: 'Destacados', icon: StarIcon },
+        { id: '/questions', label: 'Moderar preguntas', icon: ForumIcon },
       ],
     },
     {
@@ -162,11 +183,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
       <Box sx={{ p: 2, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Avatar sx={{ width: 32, height: 32, bgcolor: 'rgba(255,255,255,0.2)', fontSize: 12, fontWeight: 'bold' }}>
-            AD
+            {(authUser?.email ?? 'AD').slice(0, 2).toUpperCase()}
           </Avatar>
           <Box sx={{ minWidth: 0, flex: 1 }}>
             <Typography variant="body2" sx={{ fontWeight: 500, color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              Admin Master
+              {authUser?.email ?? 'Admin Master'}
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)' }}>
@@ -175,6 +196,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
               <SecurityIcon sx={{ fontSize: 12, color: 'secondary.main' }} />
             </Box>
           </Box>
+          <IconButton size="small" title="Cerrar sesión" onClick={() => void logout()} sx={{ color: 'rgba(255,255,255,0.7)' }}>
+            <LogoutIcon fontSize="small" />
+          </IconButton>
         </Box>
       </Box>
     </Box>
